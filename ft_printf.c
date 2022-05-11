@@ -1,46 +1,84 @@
 #include <stdarg.h>
 #include "libft.h"
+#include "print.h"
 
-int	ft_printf(const char *str, ...)
+static int	istype(char c)
 {
+	int	i;
+	int	count;
+
+	i = -1;
+	while (++i < 9)
+	{
+		if ("cspdiuxX%"[i] == c)
+			return (1);
+	}
+	return (0);
+}
+
+static int	check_type(char type, va_list ap)
+{
+	int		print_size;
+	char	c;
+
+	print_size = 0;
+	if (type == 'd' || type == 'i' || type == 'u')
+		print_size = print_du(type, va_arg(ap, int));
+	else if (type == 'x' || type == 'X')
+		print_size = print_x(type, va_arg(ap, int));
+	else if (type == 'p')
+		print_size = print_p(va_arg(ap, void *));
+	else if (type == 's')
+		print_size = print_s(va_arg(ap, char *));
+	else if (type == 'c' || type == '%')
+	{
+		if (type == 'c')
+			c = (char)va_arg(ap, int);
+		else if (type == '%')
+			c = '%';
+		ft_putchar(c);
+		print_size = 1;
+	}
+	else
+		print_size = -1;
+	return (print_size);
+}
+
+static int	pf_printf(const char *fmt, va_list ap)
+{
+	int	print_size;
 	int	rd_size;
 	int	i;
-	int num;
-	int len;
-	va_list format;
-	char *print_str;
 
-	va_start(format, str);
-	rd_size = 0;
+	print_size = 0;
 	i = 0;
-	while (str[i] != '\0')
+	while (fmt[i] != '\0')
 	{
-		if (str[i] == '%')
+		if (fmt[i] == '%')
 		{
 			++i;
-			if (str[i] == 'd' || str[i] == 'i')
-			{
-				num = va_arg(format, int);
-				print_str = ft_itoa(num);
-				
-			}
-			else if (str[i] == 's')
-			{
-				print_str = ft_strdup(va_arg(format, char *));
-			}
-			else
-				continue ;
-			len = ft_strlen(print_str);
-			rd_size += len;
-			write(1, print_str, len);
-			free(print_str);
+			if (istype(fmt[i]))
+				print_size += check_type(fmt[i], ap);
 		}
 		else
 		{
-			write(1, &str[i], 1);
-			rd_size++;
+			ft_putchar(fmt[i]);
+			print_size++;
 		}
 		++i;
 	}
-	return (rd_size);
+	return (print_size);
+}
+
+int	ft_printf(const char *fmt, ...)
+{
+	int print_size;
+	va_list ap;
+
+	va_start(ap, fmt);
+	print_size = pf_printf(fmt, ap);
+	va_end(ap);
+	if (print_size < 0)
+		return (-1);
+	return (print_size);
 }

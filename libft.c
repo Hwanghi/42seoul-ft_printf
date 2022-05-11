@@ -1,54 +1,23 @@
 #include "libft.h"
 
-static int	nbr_len(int n)
+int ft_convert_base(char save[], int sp, unsigned long num, const char *charset)
 {
-	int				len;
-	unsigned int	tmp;
+	int	base;
 
-	len = 1;
-	if (n < 0)
+	base = ft_strlen(charset);
+	if (num == 0)
+		save[--sp] = charset[0];
+	while (num)
 	{
-		tmp = -1 * n;
-		len++;
+		save[--sp] = charset[num % base];
+		num /= base;
 	}
-	else
-		tmp = n;
-	while (tmp > 9)
-	{
-		len++;
-		tmp /= 10;
-	}
-	return (len);
+	return (sp);
 }
 
-char	*ft_itoa(int n)
+int	ft_strlen(const char *s)
 {
-	char			*str;
-	int				len;
-	unsigned int	tmp;
-
-	len = nbr_len(n);
-	str = (char *)malloc(sizeof(char) * (len + 1));
-	if (!str)
-		return (NULL);
-	str[len] = '\0';
-	if (n < 0)
-		tmp = -1 * n;
-	else
-		tmp = n;
-	while (--len > -1)
-	{
-		str[len] = tmp % 10 + '0';
-		tmp /= 10;
-	}
-	if (n < 0)
-		str[0] = '-';
-	return (str);
-}
-
-size_t	ft_strlen(const char *s)
-{
-	size_t	len;
+	int	len;
 
 	len = 0;
 	while (s[len] != '\0')
@@ -56,22 +25,20 @@ size_t	ft_strlen(const char *s)
 	return (len);
 }
 
-char	*ft_strdup(const char *s1)
+void	ft_tolowerstr(char *str)
 {
-	char	*dst;
-	size_t	len;
-	size_t	i;
+	int	diff;
 
-	len = ft_strlen(s1);
-	dst = (char *)malloc(sizeof(char) * (len + 1));
-	if (!dst)
-		return (0);
-	i = 0;
-	while (s1[i] != '\0')
+	diff = 'a' - 'A';
+	while (*str != '\0')
 	{
-		dst[i] = s1[i];
-		i++;
+		if (*str >= 'A' && *str <= 'Z')
+			*str += diff;
+		str++;
 	}
-	dst[i] = '\0';
-	return (dst);
+}
+
+void	ft_putchar(char c)
+{
+	write(1, &c, 1);
 }

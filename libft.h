@@ -4,8 +4,13 @@
 # include <stdlib.h>
 # include <unistd.h>
 
-char	*ft_itoa(int n);
-char	*ft_strdup(const char *s1);
-size_t	ft_strlen(const char *str);
+# define INT_LEN 11
+# define HEX_LEN 8
+# define ADR_LEN 14
+
+int		ft_strlen(const char *s);
+int		ft_convert_base(char *, int, unsigned long, const char *);
+void	ft_tolowerstr(char *s);
+void	ft_putchar(char c);
 
 #endif
